@@ -3,11 +3,13 @@ package com.qianlei.gateway.router
 import com.qianlei.gateway.config.PluginConfig
 import com.qianlei.gateway.service.Service
 import com.qianlei.gateway.constant.HttpMethod
+import kotlinx.serialization.Serializable
 
 /**
  *
  * @author qianlei
  */
+@Serializable
 data class Router(
     val name: String,
     val labels: Map<String, String> = mapOf(),

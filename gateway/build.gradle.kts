@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.4.31"
+    kotlin("plugin.serialization") version "1.4.31"
     application
     id("com.github.johnrengelman.shadow") version "6.1.0"
 }
@@ -19,9 +20,9 @@ dependencies {
     implementation(kotlin("reflect"))
     implementation(kotlin("stdlib-jdk8"))
     testImplementation(kotlin("test-junit5"))
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
     testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.7.0")
 
-    implementation("com.fasterxml.jackson.module", "jackson-module-kotlin", "2.12.2")
     implementation("io.etcd", "jetcd-core", "0.5.4")
 
     implementation(platform("io.vertx:vertx-stack-depchain:4.0.3"))
