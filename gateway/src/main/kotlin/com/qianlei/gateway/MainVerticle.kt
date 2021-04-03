@@ -2,9 +2,10 @@ package com.qianlei.gateway
 
 import com.qianlei.gateway.config.Node
 import com.qianlei.gateway.config.ServerConfig
-import com.qianlei.gateway.config.Service
+import com.qianlei.gateway.constant.LoadBalanceType
 import com.qianlei.gateway.router.Router
 import com.qianlei.gateway.router.RouterMapping
+import com.qianlei.gateway.service.Service
 import io.vertx.core.Handler
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.ext.web.client.WebClient
@@ -23,7 +24,15 @@ class MainVerticle : CoroutineVerticle() {
 
     override suspend fun start() {
         routerMapping.addRouter(
-            Router("web1", path = "/web1/*", service = Service(nodes = listOf(Node("localhost", 9001)))),
+            Router(
+                "web1",
+                path = "/web1/*",
+                service = Service(
+                    type = LoadBalanceType.HASH,
+                    nodes = listOf(Node("localhost", 9001), Node("localhost", 9002)),
+                    hashOn = "uri"
+                )
+            ),
             Router("web2", path = "/web2/*", service = Service(nodes = listOf(Node("localhost", 9002)))),
         )
         client = WebClient.create(vertx)
@@ -34,7 +43,7 @@ class MainVerticle : CoroutineVerticle() {
 
     inner class MyHandler : Handler<HttpServerRequest> {
         override fun handle(req: HttpServerRequest) {
-            val bodyFuture = req.body()
+            val body = req.body()
             val router = routerMapping.getRouter(req.path())
             if (router == null) {
                 req.response()
@@ -43,12 +52,12 @@ class MainVerticle : CoroutineVerticle() {
                 return
             }
             launch {
-                val node = router.service.getNode()
-                val body = bodyFuture.await()
+                val loadBalance = router.service.loadBalance
+                val node = loadBalance.getNodeAfterLoadBalance(req)
                 val request = client.request(req.method(), node.port, node.host, req.uri())
                 req.headers().forEach { (name, value) -> request.putHeader(name, value) }
 
-                val response = request.sendBuffer(body).await()
+                val response = request.sendBuffer(body.await()).await()
                 req.response()
                     .setStatusCode(response.statusCode())
                     .setStatusMessage(response.statusMessage())

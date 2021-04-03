@@ -1,7 +1,7 @@
 package com.qianlei.gateway.router
 
 import com.qianlei.gateway.config.PluginConfig
-import com.qianlei.gateway.config.Service
+import com.qianlei.gateway.service.Service
 import com.qianlei.gateway.constant.HttpMethod
 
 /**
