@@ -13,16 +13,15 @@ class RouterMappingTest {
     fun testIllegalPath() {
         runBlocking {
             val routerMapping = RouterMapping()
-            routerMapping.addRouter("" to Router.createEmptyRouter())
-            routerMapping.addRouter("/" to Router.createEmptyRouter())
-            routerMapping.addRouter("/a" to Router.createEmptyRouter())
-            routerMapping.addRouter("/a/b" to Router.createEmptyRouter())
-            routerMapping.addRouter("/*" to Router.createEmptyRouter())
-            routerMapping.addRouter("/a/*" to Router.createEmptyRouter())
+            routerMapping.addRouter(Router("", path = ""))
+            routerMapping.addRouter(Router("", path = "/a"))
+            routerMapping.addRouter(Router("", path = "/a/b"))
+            routerMapping.addRouter(Router("", path = "/*"))
+            routerMapping.addRouter(Router("", path = "/a/*"))
 
-            assertThrows<IllegalArgumentException> { routerMapping.addRouter("//a" to Router.createEmptyRouter()) }
-            assertThrows<IllegalArgumentException> { routerMapping.addRouter("/*/a" to Router.createEmptyRouter()) }
-            assertThrows<IllegalArgumentException> { routerMapping.addRouter("/a/**" to Router.createEmptyRouter()) }
+            assertThrows<IllegalArgumentException> { routerMapping.addRouter(Router("", path = "//a")) }
+            assertThrows<IllegalArgumentException> { routerMapping.addRouter(Router("", path = "/*/a")) }
+            assertThrows<IllegalArgumentException> { routerMapping.addRouter(Router("", path = "/a/**")) }
         }
     }
 }

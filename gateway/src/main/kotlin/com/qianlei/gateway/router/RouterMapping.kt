@@ -17,10 +17,11 @@ class RouterMapping {
     /**
      * 添加路由
      */
-    suspend fun addRouter(vararg routers: Pair<String, Router>) {
-        routers.forEach { require(isPattern(it.first)) }
+    suspend fun addRouter(vararg routers: Router) {
+        routers.forEach { require(isPattern(it.path)) }
         mutex.withLock {
-            routers.forEach { (path, router) ->
+            routers.forEach { router ->
+                val path = router.path
                 val subPaths = path.split("/").filter { it != "" }
                 trieTree.add(subPaths, router)
             }

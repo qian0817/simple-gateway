@@ -6,7 +6,11 @@ import com.qianlei.gateway.constant.LoadBalanceType
  *
  * @author qianlei
  */
-data class ServiceConfig(
+data class Service(
     val type: LoadBalanceType = LoadBalanceType.ROUND_RIBBON,
-    val nodeList: List<Node> = emptyList(),
-)
+    val nodes: List<Node> = emptyList(),
+) {
+    fun getNode(): Node {
+        return nodes[0]
+    }
+}

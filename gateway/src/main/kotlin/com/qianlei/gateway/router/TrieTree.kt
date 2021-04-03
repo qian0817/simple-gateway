@@ -55,6 +55,7 @@ class TrieTree<T> {
     fun get(path: List<String>): T? {
         var ret: T? = null
         var node = root
+        node.child["*"]?.let { ret = it.value }
         for (i in path.indices) {
             val subPath = path[i]
             node.child["*"]?.let { ret = it.value }

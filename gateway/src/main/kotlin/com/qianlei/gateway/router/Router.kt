@@ -1,7 +1,7 @@
 package com.qianlei.gateway.router
 
 import com.qianlei.gateway.config.PluginConfig
-import com.qianlei.gateway.config.ServiceConfig
+import com.qianlei.gateway.config.Service
 import com.qianlei.gateway.constant.HttpMethod
 
 /**
@@ -17,12 +17,6 @@ data class Router(
     val host: String? = null,
     val path: String = "/*",
     val methods: Set<HttpMethod> = emptySet(),
-    val service: ServiceConfig = ServiceConfig(),
+    val service: Service = Service(),
     val plugins: List<PluginConfig> = listOf()
-) {
-    companion object {
-        fun createEmptyRouter(): Router {
-            return Router("")
-        }
-    }
-}
+)
