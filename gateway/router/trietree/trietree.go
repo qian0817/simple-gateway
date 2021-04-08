@@ -76,7 +76,7 @@ func (t *TrieTree) Get(path []string) interface{} {
 	if node.child["*"] != nil {
 		ret = node.child["*"].value
 	}
-	if node.value != nil {
+	if len(path) == 0 && node.value != nil {
 		ret = node.value
 	}
 	for i := 0; i < len(path); i++ {

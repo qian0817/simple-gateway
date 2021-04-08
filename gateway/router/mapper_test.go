@@ -16,7 +16,7 @@ func TestMapper(t *testing.T) {
 
 	assert.Equal(t, routerMapper.GetRouter("/a"), &Router{Path: "/a"})
 	assert.Equal(t, routerMapper.GetRouter("/a/b"), &Router{Path: "/a/b"})
-	assert.Equal(t, routerMapper.GetRouter("/b"), &Router{Path: "/*"})
+	assert.Equal(t, routerMapper.GetRouter("/a/d"), &Router{Path: "/a/*"})
 	assert.Equal(t, routerMapper.GetRouter("/"), &Router{Path: "/"})
 	assert.Nil(t, routerMapper.GetRouter("/b"))
 }
