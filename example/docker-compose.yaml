@@ -6,7 +6,16 @@ services:
       - 2379:2379
       - 2380:2380
     environment:
+      ETCD_ADVERTISE_CLIENT_URLS: "http://etcd:2379"
       ALLOW_NONE_AUTHENTICATION: "yes"
+  gateway:
+    build: ../gateway/.
+    ports:
+      - "8080:8080/tcp"
+    environment:
+      ETCD_ENDPOINT: "etcd:2379"
+      ETCD_USERNAME:
+      ETCD_PASSWORD:
   web1:
     image: openresty/openresty:1.19.3.1-alpine
     volumes:

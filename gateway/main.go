@@ -4,11 +4,21 @@ import (
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
 func main() {
-	client, err := clientv3.New(clientv3.Config{Endpoints: []string{"localhost:2379"}})
+	endpoint := os.Getenv("ETCD_ENDPOINT")
+	etcdUsername := os.Getenv("ETCD_USERNAME")
+	etcdPassword := os.Getenv("ETCD_PASSWORD")
+	client, err := clientv3.New(
+		clientv3.Config{
+			Endpoints: []string{endpoint},
+			Username:  etcdUsername,
+			Password:  etcdPassword,
+		},
+	)
 	if err != nil {
 		panic(err)
 	}
