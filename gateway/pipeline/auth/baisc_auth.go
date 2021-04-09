@@ -1,23 +1,31 @@
 package auth
 
-import "net/http"
+import (
+	"gateway/pipeline"
+	"net/http"
+)
 
 type BasicAuth struct {
-	username string
-	password string
+	Username string
+	Password string
 }
 
-func (b *BasicAuth) handle(request *http.Request, response *http.Response, doNext func(*http.Request, *http.Response)) {
-	username, password, ok := request.BasicAuth()
-
-	if ok && username == b.username && password == b.password {
-		doNext(request, response)
+func (b *BasicAuth) Init(data interface{}) {
+	m, ok := data.(map[string]interface{})
+	if !ok {
 		return
 	}
-	response.StatusCode = 403
-	//response.Body
+	b.Username = m["Username"].(string)
+	b.Password = m["Password"].(string)
 }
 
-func (b *BasicAuth) enable() bool {
-	panic("implement me")
+func (b *BasicAuth) Handle(w http.ResponseWriter, request *http.Request, chain pipeline.PipelineChain) {
+	username, password, ok := request.BasicAuth()
+
+	if ok && username == b.Username && password == b.Password {
+		chain.DoNext(w, request)
+		return
+	}
+	w.WriteHeader(403)
+	_, _ = w.Write([]byte("unauthorizated"))
 }

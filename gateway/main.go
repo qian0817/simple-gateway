@@ -1,6 +1,9 @@
 package main
 
 import (
+	"gateway/pipeline"
+	"gateway/pipeline/auth"
+	"gateway/pipeline/general"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"log"
 	"net/http"
@@ -9,6 +12,7 @@ import (
 )
 
 func main() {
+	RegisterSupportPlugin()
 	endpoint := os.Getenv("ETCD_ENDPOINT")
 	etcdUsername := os.Getenv("ETCD_USERNAME")
 	etcdPassword := os.Getenv("ETCD_PASSWORD")
@@ -28,4 +32,9 @@ func main() {
 		ReadTimeout: 3 * time.Second,
 	}
 	log.Fatal(server.ListenAndServe())
+}
+
+func RegisterSupportPlugin() {
+	pipeline.Register("basic_auth", &auth.BasicAuth{})
+	pipeline.Register("echo", &general.Echo{})
 }

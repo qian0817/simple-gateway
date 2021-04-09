@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"gateway/etcd"
+	"gateway/pipeline"
 	"gateway/router"
 	clientv3 "go.etcd.io/etcd/client/v3"
-	"io/ioutil"
 	"net/http"
 	"strings"
 )
@@ -34,34 +34,8 @@ func (handler *GatewayHandler) ServeHTTP(w http.ResponseWriter, request *http.Re
 		return
 	}
 	node := route.Service.LoadBalance.GetNode(route.Service.Nodes, request)
-	url := node.CreateUrl(request.RequestURI)
-	r, err := http.NewRequest(request.Method, url, request.Body)
-	if err != nil {
-		panic(err)
-	}
-	for k, v := range request.Header {
-		for _, value := range v {
-			r.Header.Add(k, value)
-		}
-	}
-	response, err := handler.webClient.Do(r)
-	if err != nil {
-		panic(err)
-	}
-	bytes, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		panic(err)
-	}
-	for k, v := range response.Header {
-		for _, value := range v {
-			w.Header().Add(k, value)
-		}
-	}
-	w.WriteHeader(response.StatusCode)
-	_, err = w.Write(bytes)
-	if err != nil {
-		panic(err)
-	}
+	chain := pipeline.NewApplicationPipelineChain(route.Pipelines(), &node)
+	chain.DoNext(w, request)
 }
 
 func getPath(request *http.Request) string {
